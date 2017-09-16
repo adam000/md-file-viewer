@@ -26,12 +26,42 @@ func main() {
 	r := mux.NewRouter()
 
 	r.PathPrefix("/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		path := strings.TrimLeft(r.URL.String(), "/") + ".md"
-		log.Print(path)
+		path := strings.TrimLeft(r.URL.String(), "/")
+		log.Printf("Routing request %s", path)
+		if fileInfo, err := os.Stat(path); os.IsNotExist(err) {
+		} else if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		} else {
+			if fileInfo.IsDir() {
+				fmt.Fprintf(w, "Directory listing for '%s':\n", path)
+				files, err := ioutil.ReadDir(path)
+				if err != nil {
+					w.WriteHeader(http.StatusInternalServerError)
+					log.Printf("%s", err)
+					return
+				}
+				for _, file := range files {
+					if file.IsDir() {
+						fmt.Fprintf(w, "dir: %s\n", file.Name())
+					} else {
+						fmt.Fprintf(w, "file: %s\n", file.Name())
+					}
+				}
+				//dirHandler(w http.ResponseWriter, r *http.Request)
+				return
+			}
+		}
+
+		path += ".md"
 		if _, err := os.Stat(path); os.IsNotExist(err) {
 			http.NotFound(w, r)
 			return
+		} else if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
 		}
+		log.Printf("Serving up %s", path)
 
 		markdown, err := ioutil.ReadFile(path)
 		if err != nil {
@@ -59,9 +89,9 @@ func main() {
 const wrapper = `
 <html>
 <head>
-  <style type="text/css">
-    {{.Css}}
-  </style>
+	<style type="text/css">
+		{{.Css}}
+	</style>
 </head>
 <body>
 	<div id="main">
@@ -83,10 +113,15 @@ const css = `
 
 .file-name {
 	margin-bottom: 30px;
+	border-bottom: 3px solid #D88;
 }
 
 #content {
 	border: 1px #DDD solid;
+}
+
+p {
+	margin: 0.5em;
 }
 
 code {
@@ -99,5 +134,18 @@ pre {
 	border: 1px #888 solid;
 	margin: 5px;
 	padding: 5px;
+	overflow: auto;
 }
+
+:not(pre) > code {
+	background: #DDD;
+	border: 1px #888 solid;
+	margin: 5px;
+}
+
+blockquote {
+	background-color: #F3F3F3;
+	border: 1px solid #DDD;
+}
+
 `
