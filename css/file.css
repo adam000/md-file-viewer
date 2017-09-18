@@ -1,0 +1,42 @@
+#main {
+	width: 800px;
+	margin: 0 auto;
+	font-family: sans-serif;
+}
+
+.file-name {
+	margin-bottom: 30px;
+	border-bottom: 3px solid #D88;
+}
+
+#content {
+	border: 1px #DDD solid;
+}
+
+p {
+	margin: 0.5em;
+}
+
+code {
+	font-family: Inconsolata, monospace;
+	padding: 0 3px;
+}
+
+pre {
+	background: #DDD;
+	border: 1px #888 solid;
+	margin: 5px;
+	padding: 5px;
+	overflow: auto;
+}
+
+:not(pre) > code {
+	background: #DDD;
+	border: 1px #888 solid;
+	margin: 5px;
+}
+
+blockquote {
+	background-color: #F3F3F3;
+	border: 1px solid #DDD;
+}

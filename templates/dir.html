@@ -1,0 +1,13 @@
+<div class="directory">
+	{{range .FilesUnder}}
+		<p>
+			{{if .IsDir}}
+			<i class="fa fa-folder-open" aria-hidden="true"></i>
+			{{else}}
+			<i class="fa fa-file" aria-hidden="true"></i>
+			{{end}}
+			<a href="{{.FullPath}}">{{.Name}}</a>
+		</p>
+	{{end}}
+</div>
+

@@ -1,0 +1,20 @@
+<html>
+<head>
+	<style type="text/css">
+		{{.Css}}
+	</style>
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+</head>
+<body>
+	<div id="main">
+		<div id="content">
+			{{if eq .Directory.Name "."}}
+				<h1>Root</h1>
+			{{else}}
+				<h1><a href="{{.Directory.Parent}}">&laquo;</a> {{.Directory.Name}}</h1>
+			{{end}}
+			{{template "dir.html" .Directory}}
+		</div>
+	</div>
+</body>
+</html>
