@@ -10,11 +10,11 @@ import (
 )
 
 var tpl *template.Template
-var cfg config
+var cfg configuration
 
 func main() {
 	// Load config
-	c, err := loadConfig()
+	c, err := loadConfiguration()
 	cfg = c
 
 	if err != nil {

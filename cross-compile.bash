@@ -26,4 +26,5 @@ GOOS=linux do_arch_builds
 GOOS=darwin do_arch_builds
 GOOS=windows do_arch_builds
 
-
+echo "Copying css, templates..."
+cp -R css templates builds/

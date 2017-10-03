@@ -8,23 +8,23 @@ import (
 	"os"
 	"strings"
 
-	"go4.org/xdgdir"
+	"github.com/adam000/goutils/config"
 )
 
 const configFileName = "md-file-viewer.conf"
 
-type config struct {
+type configuration struct {
 	RootDir     string
 	StyleDir    string
 	TemplateDir string
 }
 
-// Validate checks that the config is valid (directories exist).
-func (c config) Validate() error {
+// Validate checks that the configuration is valid (directories exist).
+func (c configuration) Validate() error {
 	def := defaults()
 	if strings.TrimSpace(c.RootDir) == "" {
 		c.RootDir = def.RootDir
-		log.Printf("Config has no value for root directory, assuming default of '%s'", c.RootDir)
+		log.Printf("Configuration has no value for root directory, assuming default of '%s'", c.RootDir)
 	}
 	if _, err := os.Stat(c.RootDir); err != nil {
 		return fmt.Errorf("Could not find root directory '%s': %s", c.RootDir, err)
@@ -32,7 +32,7 @@ func (c config) Validate() error {
 
 	if strings.TrimSpace(c.StyleDir) == "" {
 		c.StyleDir = def.StyleDir
-		log.Printf("Config has no value for style directory, assuming default of '%s'", c.StyleDir)
+		log.Printf("Configuration has no value for style directory, assuming default of '%s'", c.StyleDir)
 	}
 	if _, err := os.Stat(c.StyleDir); err != nil {
 		return fmt.Errorf("Could not find style directory '%s': %s", c.StyleDir, err)
@@ -40,7 +40,7 @@ func (c config) Validate() error {
 
 	if strings.TrimSpace(c.TemplateDir) == "" {
 		c.TemplateDir = def.TemplateDir
-		log.Printf("Config has no value for template directory, assuming default of '%s'", c.TemplateDir)
+		log.Printf("Configuration has no value for template directory, assuming default of '%s'", c.TemplateDir)
 	}
 	if _, err := os.Stat(c.TemplateDir); err != nil {
 		return fmt.Errorf("Could not find template directory '%s': %s", c.TemplateDir, err)
@@ -49,29 +49,30 @@ func (c config) Validate() error {
 	return nil
 }
 
-func defaults() config {
-	return config{
+func defaults() configuration {
+	return configuration{
 		RootDir:     ".",
 		StyleDir:    "css",
 		TemplateDir: "templates",
 	}
 }
 
-// Create a new config file and return the default config.
-func createNewConfigFile() config {
-	cfg := defaults()
+// Create a new configion file and return the default configuration.
+func createNewConfigFile() configuration {
+	c := defaults()
 
 	//TODO finish this
 	//xdgdir.Config.Create(configFileName)
 
-	return cfg
+	return c
 }
 
-func loadConfig() (config, error) {
+func loadConfiguration() (configuration, error) {
 	cfg := defaults()
 
 	var bytes []byte
-	file, err := xdgdir.Config.Open(configFileName)
+	//file, err := xdgdir.Config.Open(configFileName)
+	file, err := config.Open(configFileName)
 	if err != nil {
 		// Try current directory for config.
 		bytes, err = ioutil.ReadFile(configFileName)
