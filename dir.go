@@ -41,25 +41,25 @@ func dirHandler(w http.ResponseWriter, r *http.Request, path string) {
 		return
 	}
 	for _, file := range files {
+		fileName := file.Name()
 		if file.IsDir() {
 			dir := fileOrDir{
-				Name:     file.Name(),
-				FullPath: "/" + filepath.Join(path, file.Name()),
+				Name:     fileName,
+				FullPath: "/" + filepath.Join(path, fileName),
 				IsDir:    true,
 			}
 			data.Directory.FilesUnder = append(data.Directory.FilesUnder, dir)
 			// TODO: recurse 1-2 layers?
-		} else if strings.HasSuffix(file.Name(), ".md") {
-			// TODO maybe get rid of the million file.Name() calls?
+		} else if strings.HasSuffix(fileName, ".md") {
 			dir := fileOrDir{
-				Name:     strings.TrimSuffix(file.Name(), filepath.Ext(file.Name())),
-				FullPath: "/" + strings.TrimSuffix(filepath.Join(path, file.Name()), filepath.Ext(file.Name())),
+				Name:     strings.TrimSuffix(fileName, filepath.Ext(fileName)),
+				FullPath: "/" + strings.TrimSuffix(filepath.Join(path, fileName), filepath.Ext(fileName)),
 				IsDir:    false,
 			}
 			data.Directory.FilesUnder = append(data.Directory.FilesUnder, dir)
 		} else {
 			// TODO different kind of handler for other files?
-			log.Printf("Skipping non-md file %s", file.Name())
+			log.Printf("Skipping non-md file %s", fileName)
 		}
 	}
 
