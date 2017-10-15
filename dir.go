@@ -51,18 +51,25 @@ func dirHandler(w http.ResponseWriter, r *http.Request, path string) {
 			data.Directory.FilesUnder = append(data.Directory.FilesUnder, dir)
 			// TODO: recurse 1-2 layers?
 		} else if strings.HasSuffix(fileName, ".md") {
+			fileNameWithoutExt := strings.TrimSuffix(fileName, filepath.Ext(fileName))
 			dir := fileOrDir{
-				Name:     strings.TrimSuffix(fileName, filepath.Ext(fileName)),
-				FullPath: "/" + strings.TrimSuffix(filepath.Join(path, fileName), filepath.Ext(fileName)),
+				Name:     fileNameWithoutExt,
+				FullPath: "/" + filepath.Join(path, fileNameWithoutExt),
+				IsDir:    false,
+			}
+			data.Directory.FilesUnder = append(data.Directory.FilesUnder, dir)
+		} else if isImagePath(filepath.Join(path, file.Name())) {
+			dir := fileOrDir{
+				Name:     file.Name(),
+				FullPath: "/" + filepath.Join(path, file.Name()),
 				IsDir:    false,
 			}
 			data.Directory.FilesUnder = append(data.Directory.FilesUnder, dir)
 		} else {
 			// TODO different kind of handler for other files?
-			log.Printf("Skipping non-md file %s", fileName)
+			log.Printf("Skipping non-md/image file %s", fileName)
 		}
 	}
 
 	tpl.ExecuteTemplate(w, "page_dir.html", data)
-
 }

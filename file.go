@@ -26,22 +26,20 @@ func fileHandler(w http.ResponseWriter, r *http.Request) {
 	} else if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
-	} else {
-		if fileInfo.IsDir() {
-			// Defer to directory handler.
-			dirHandler(w, r, path)
-			return
-		}
+	} else if fileInfo.IsDir() {
+		// Defer to directory handler.
+		dirHandler(w, r, path)
+		return
 	}
 
-	path += ".md"
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		http.NotFound(w, r)
+	if _, err := os.Stat(path + ".md"); os.IsNotExist(err) {
+		otherFileHandler(path, w, r)
 		return
 	} else if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+	path += ".md"
 	log.Printf("Serving up %s", path)
 
 	markdown, err := ioutil.ReadFile(path)
@@ -68,4 +66,27 @@ func fileHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tpl.ExecuteTemplate(w, "page_file.html", data)
+}
+
+func otherFileHandler(path string, w http.ResponseWriter, r *http.Request) {
+	if !isImagePath(path) {
+		http.NotFound(w, r)
+		return
+	}
+
+	http.ServeFile(w, r, filepath.Join(cfg.RootDir, path))
+}
+
+func isImagePath(path string) bool {
+	isImage := false
+	extension := strings.ToLower(filepath.Ext(path))
+
+	for _, imageExt := range []string{".jpg", ".png", ".jpeg", ".gif"} {
+		if extension == imageExt {
+			isImage = true
+			break
+		}
+	}
+
+	return isImage
 }
