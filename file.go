@@ -15,34 +15,35 @@ import (
 
 func fileHandler(w http.ResponseWriter, r *http.Request) {
 	path := strings.TrimLeft(r.URL.String(), "/")
-	log.Printf("Routing request '/%s'", path)
+	diskPath := filepath.Join(cfg.RootDir, path)
+	log.Printf("Routing request '/%s' using data at '%s'", path, diskPath)
 	if path == "" {
 		// Defer to directory handler for base.
-		dirHandler(w, r, path)
+		dirHandler(w, r, path, diskPath)
 		return
 	}
 
-	if fileInfo, err := os.Stat(path); os.IsNotExist(err) {
+	if fileInfo, err := os.Stat(diskPath); os.IsNotExist(err) {
 	} else if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	} else if fileInfo.IsDir() {
 		// Defer to directory handler.
-		dirHandler(w, r, path)
+		dirHandler(w, r, path, diskPath)
 		return
 	}
 
-	if _, err := os.Stat(path + ".md"); os.IsNotExist(err) {
-		otherFileHandler(path, w, r)
+	if _, err := os.Stat(diskPath + ".md"); os.IsNotExist(err) {
+		otherFileHandler(diskPath, w, r)
 		return
 	} else if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	path += ".md"
-	log.Printf("Serving up %s", path)
+	diskPath += ".md"
+	log.Printf("Serving up %s", diskPath)
 
-	markdown, err := ioutil.ReadFile(path)
+	markdown, err := ioutil.ReadFile(diskPath)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return

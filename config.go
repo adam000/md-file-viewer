@@ -71,7 +71,7 @@ func loadConfiguration() (configuration, error) {
 	cfg := defaults()
 
 	var bytes []byte
-	//file, err := xdgdir.Config.Open(configFileName)
+	log.Printf("Attempting to read file at %s", configFileName)
 	file, err := config.Open(configFileName)
 	if err != nil {
 		// Try current directory for config.

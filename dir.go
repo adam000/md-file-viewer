@@ -19,13 +19,12 @@ type fileOrDir struct {
 
 type dirListing []fileOrDir
 
-func dirHandler(w http.ResponseWriter, r *http.Request, path string) {
-	path = filepath.Join(cfg.RootDir, path)
-
+func dirHandler(w http.ResponseWriter, r *http.Request, path, diskPath string) {
 	data := struct {
 		Css       template.CSS
 		Directory fileOrDir
 	}{
+		Css: ".fa { width: 20px; }",
 		Directory: fileOrDir{
 			Name:     filepath.Base(path),
 			FullPath: path,
@@ -34,10 +33,10 @@ func dirHandler(w http.ResponseWriter, r *http.Request, path string) {
 		},
 	}
 
-	files, err := ioutil.ReadDir(path)
+	files, err := ioutil.ReadDir(diskPath)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		log.Printf("%s", err)
+		log.Printf("Error reading directory: %s", err)
 		return
 	}
 	for _, file := range files {

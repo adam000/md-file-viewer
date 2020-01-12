@@ -5,12 +5,14 @@
 }
 
 .file-name {
+	width: fit-content;
 	margin-bottom: 30px;
 	border-bottom: 3px solid #D88;
 }
 
 #content {
 	border: 1px #DDD solid;
+    padding: 5px;
 }
 
 p {
@@ -33,10 +35,15 @@ pre {
 :not(pre) > code {
 	background: #DDD;
 	border: 1px #888 solid;
-	margin: 5px;
+	margin: 3px;
+    padding: 0 3px;
 }
 
 blockquote {
 	background-color: #F3F3F3;
 	border: 1px solid #DDD;
+}
+
+td:not(:empty) {
+    border: 1px solid black;
 }
