@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 
@@ -14,12 +15,12 @@ import (
 )
 
 func fileHandler(w http.ResponseWriter, r *http.Request) {
-	path := strings.TrimLeft(r.URL.String(), "/")
-	diskPath := filepath.Join(cfg.RootDir, path)
-	log.Printf("Routing request '/%s' using data at '%s'", path, diskPath)
-	if path == "" {
+	requestBase := strings.TrimLeft(r.URL.String(), "/")
+	diskPath := path.Join(cfg.RootDir, requestBase)
+	log.Printf("Routing request '/%s' using data at '%s'", requestBase, diskPath)
+	if requestBase == "" {
 		// Defer to directory handler for base.
-		dirHandler(w, r, path, diskPath)
+		dirHandler(w, r, requestBase, diskPath)
 		return
 	}
 
@@ -29,7 +30,7 @@ func fileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	} else if fileInfo.IsDir() {
 		// Defer to directory handler.
-		dirHandler(w, r, path, diskPath)
+		dirHandler(w, r, requestBase, diskPath)
 		return
 	}
 
@@ -63,7 +64,7 @@ func fileHandler(w http.ResponseWriter, r *http.Request) {
 	}{
 		Css:      template.CSS(cssBytes),
 		Content:  htmlResult,
-		FileName: path,
+		FileName: requestBase,
 	}
 
 	tpl.ExecuteTemplate(w, "page_file.html", data)
