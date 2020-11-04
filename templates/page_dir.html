@@ -1,5 +1,6 @@
 <html>
 <head>
+	<title>{{.Directory.Name}}</title>
 	<style type="text/css">
 		{{.Css}}
 	</style>
@@ -8,7 +9,7 @@
 <body>
 	<div id="main">
 		<div id="content">
-			{{if eq .Directory.Name "."}}
+			{{if eq .Directory.Name "Root"}}
 				<h1>Root</h1>
 			{{else}}
 				<h1><a href="{{.Directory.Parent}}">&laquo;</a> {{.Directory.Name}}</h1>

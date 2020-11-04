@@ -2,3 +2,4 @@
 md-file-viewer
 builds/*
 localTests
+go.sum

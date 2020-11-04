@@ -20,13 +20,17 @@ type fileOrDir struct {
 type dirListing []fileOrDir
 
 func dirHandler(w http.ResponseWriter, r *http.Request, path, diskPath string) {
+	thisDirPath := filepath.Base(path)
+	if thisDirPath == "." {
+		thisDirPath = "Root"
+	}
 	data := struct {
 		Css       template.CSS
 		Directory fileOrDir
 	}{
 		Css: ".fa { width: 20px; }",
 		Directory: fileOrDir{
-			Name:     filepath.Base(path),
+			Name:     thisDirPath,
 			FullPath: path,
 			Parent:   "/" + filepath.Dir(path),
 			IsDir:    true,
