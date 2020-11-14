@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"path"
 	"path/filepath"
 	"strings"
 )
@@ -19,8 +20,8 @@ type fileOrDir struct {
 
 type dirListing []fileOrDir
 
-func dirHandler(w http.ResponseWriter, r *http.Request, path, diskPath string) {
-	thisDirPath := filepath.Base(path)
+func dirHandler(w http.ResponseWriter, r *http.Request, dirPath, diskPath string) {
+	thisDirPath := path.Base(dirPath)
 	if thisDirPath == "." {
 		thisDirPath = "Root"
 	}
@@ -31,8 +32,8 @@ func dirHandler(w http.ResponseWriter, r *http.Request, path, diskPath string) {
 		Css: ".fa { width: 20px; }",
 		Directory: fileOrDir{
 			Name:     thisDirPath,
-			FullPath: path,
-			Parent:   "/" + filepath.Dir(path),
+			FullPath: dirPath,
+			Parent:   "/" + path.Dir(dirPath),
 			IsDir:    true,
 		},
 	}
@@ -48,7 +49,7 @@ func dirHandler(w http.ResponseWriter, r *http.Request, path, diskPath string) {
 		if file.IsDir() {
 			dir := fileOrDir{
 				Name:     fileName,
-				FullPath: "/" + filepath.Join(path, fileName),
+				FullPath: "/" + path.Join(dirPath, fileName),
 				IsDir:    true,
 			}
 			data.Directory.FilesUnder = append(data.Directory.FilesUnder, dir)
@@ -57,14 +58,14 @@ func dirHandler(w http.ResponseWriter, r *http.Request, path, diskPath string) {
 			fileNameWithoutExt := strings.TrimSuffix(fileName, filepath.Ext(fileName))
 			dir := fileOrDir{
 				Name:     fileNameWithoutExt,
-				FullPath: "/" + filepath.Join(path, fileNameWithoutExt),
+				FullPath: "/" + path.Join(dirPath, fileNameWithoutExt),
 				IsDir:    false,
 			}
 			data.Directory.FilesUnder = append(data.Directory.FilesUnder, dir)
-		} else if isImagePath(filepath.Join(path, file.Name())) {
+		} else if isImagePath(filepath.Join(dirPath, file.Name())) {
 			dir := fileOrDir{
 				Name:     file.Name(),
-				FullPath: "/" + filepath.Join(path, file.Name()),
+				FullPath: "/" + path.Join(dirPath, file.Name()),
 				IsDir:    false,
 			}
 			data.Directory.FilesUnder = append(data.Directory.FilesUnder, dir)
