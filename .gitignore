@@ -3,4 +3,3 @@ md-file-viewer
 md-file-viewer.exe
 builds/*
 localTests
-go.sum
