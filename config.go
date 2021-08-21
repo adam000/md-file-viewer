@@ -17,9 +17,10 @@ type configuration struct {
 	RootDir     string
 	StyleDir    string
 	TemplateDir string
+	Port        int
 }
 
-// Validate checks that the configuration is valid (directories exist).
+// Validate checks that the configuration is valid (directories exist; port is a valid port).
 func (c configuration) Validate() error {
 	def := defaults()
 	if strings.TrimSpace(c.RootDir) == "" {
@@ -46,6 +47,11 @@ func (c configuration) Validate() error {
 		return fmt.Errorf("Could not find template directory '%s': %s", c.TemplateDir, err)
 	}
 
+	if c.Port == 0 {
+		c.Port = def.Port
+		log.Printf("Configuration port unset; using default %d", def.Port)
+	}
+
 	return nil
 }
 
@@ -54,6 +60,7 @@ func defaults() configuration {
 		RootDir:     ".",
 		StyleDir:    "css",
 		TemplateDir: "templates",
+		Port:        6060,
 	}
 }
 

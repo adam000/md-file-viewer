@@ -40,7 +40,7 @@ func main() {
 	r.PathPrefix("/").HandlerFunc(fileHandler)
 	http.Handle("/", r)
 
-	port := ":6060"
+	port := fmt.Sprintf(":%d", c.Port)
 	log.Printf("Server running at localhost%s", port)
 	log.Fatal(http.ListenAndServe(port, nil))
 }
