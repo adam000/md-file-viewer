@@ -11,7 +11,7 @@ import (
 	"strings"
 
 	"github.com/microcosm-cc/bluemonday"
-	"github.com/russross/blackfriday"
+	blackfriday "github.com/russross/blackfriday/v2"
 )
 
 func fileHandler(w http.ResponseWriter, r *http.Request) {
@@ -50,7 +50,7 @@ func fileHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	htmlResult := template.HTML(bluemonday.UGCPolicy().SanitizeBytes(blackfriday.MarkdownCommon(markdown)))
+	htmlResult := template.HTML(bluemonday.UGCPolicy().SanitizeBytes(blackfriday.Run(markdown)))
 
 	cssBytes, err := ioutil.ReadFile(filepath.Join(cfg.StyleDir, "file.css"))
 	if err != nil {
