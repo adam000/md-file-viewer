@@ -42,5 +42,6 @@ func main() {
 
 	port := fmt.Sprintf(":%d", c.Port)
 	log.Printf("Server running at localhost%s", port)
+	log.Printf("Serving files in root directory '%s'", c.RootDir)
 	log.Fatal(http.ListenAndServe(port, nil))
 }

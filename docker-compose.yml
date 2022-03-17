@@ -2,10 +2,12 @@ version: "3"
 
 services:
     web:
-        #build: .
-        image: md-file-viewer:latest
+        build: .
+        #image: localhost:2005/md-file-viewer:latest
         ports:
             - "6060:8080"
+        volumes:
+            - /docker/markdrive:/Documents:ro
         restart: "unless-stopped"
         deploy:
             resources:
