@@ -1,8 +1,7 @@
 ####
 # Base Go build
 ####
-FROM golang:1.18 as build
-ENV GO111MODULE on
+FROM golang:1.19 as build
 
 # Warm up the module cache.
 # Only copy in go.mod and go.sum to increase Docker cache hit rate.
